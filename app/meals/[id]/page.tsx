@@ -4,7 +4,7 @@ import { fetchMealById, fetchMealsByFirstLetter, extractIngredients } from '@/li
 import AnalyzePanel from '@/components/AnalyzePanel';
 
 interface MealPageProps {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }
 
 // Generate static params (set of IDs) for SSG
@@ -21,7 +21,8 @@ export async function generateStaticParams() {
 export const dynamicParams = false; // generate only the IDs listed above
 
 export default async function MealPage({ params }: MealPageProps) {
-  const meal = await fetchMealById(params.id);
+  const { id } = await params;
+  const meal = await fetchMealById(id);
 
   if (!meal) {
     return (
