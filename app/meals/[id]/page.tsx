@@ -9,9 +9,15 @@ interface MealPageProps {
 
 // Generate static params (set of IDs) for SSG
 export async function generateStaticParams() {
-  // For the demo project, one letter is enough
-  const meals = await fetchMealsByFirstLetter('a');
-
+  // Generate meal IDs by fetching meals starting with each letter of the alphabet
+  const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
+  
+  const allMeals = await Promise.all(
+    letters.map(letter => fetchMealsByFirstLetter(letter))
+  );
+  
+  const meals = allMeals.flat();
+  
   return meals.map((meal) => ({
     id: meal.idMeal,
   }));
