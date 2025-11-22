@@ -386,8 +386,8 @@ graph TB
     E -->|HTML| A
     F -->|Interactivity| A
     
-    style A fill:#90caf9
-    style B fill:#ffcc80
+    style A fill:#03345c
+    style B fill:#915a09
     style G fill:#ce93d8
 ```
 
