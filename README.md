@@ -386,9 +386,9 @@ graph TB
     E -->|HTML| A
     F -->|Interactivity| A
     
-    style A fill:#e1f5ff
-    style B fill:#fff3e0
-    style G fill:#f3e5f5
+    style A fill:#90caf9
+    style B fill:#ffcc80
+    style G fill:#ce93d8
 ```
 
 ### 7.2 Tiedonkulku
