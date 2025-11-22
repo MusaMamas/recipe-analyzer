@@ -1,75 +1,27 @@
 # Recipe Analyzer - Seminaarityöraportti
 
-**Tekijä:** Musa Mamas  
+**Tekijä:** Musakhan Mamasaliev  
 **Projekti:** Recipe Analyzer  
 **GitHub:** https://github.com/MusaMamas/recipe-analyzer  
 **Teknologiat:** Next.js 15, React, TypeScript, Tailwind CSS, TheMealDB API  
-**Päivämäärä:** Marraskuu 2025
+**Päivämäärä:** 20.11.2025
 
 ---
 
 ## 1. Johdanto
 
-Tämä seminaarityö käsittelee modernin web-sovelluksen kehittämistä Next.js-frameworkilla. Projekti on reseptien hakusovellus nimeltä **Recipe Analyzer**, joka hyödyntää TheMealDB:n ilmaista API:a reseptitietojen hakemiseen ja näyttämiseen.
+Tämä dokumentti esittelee Recipe Analyzer -nimisen web-sovelluksen suunnittelun, toteutuksen ja teknisen taustan. Sovellus on toteutettu modernilla Next.js 15 -sovelluskehyksellä ja hyödyntää ulkoista TheMealDB-rajapintaa reseptitietojen hakemiseen. Projektin tavoitteena oli perehtyä Next.js:n tarjoamiin full stack -ominaisuuksiin, kuten staattiseen sivugenerointiin (SSG), palvelin- ja asiakaskomponenttien yhteistoimintaan sekä sisäänrakennettuihin API-reitteihin.
 
-### Työn tavoitteet
+## 2. Projektin tavoitteet ja lähtökohdat
+Projektin keskeinen päämäärä oli kehittää sovellus, joka tarjoaa käyttäjälle yksinkertaisen ja tehokkaan tavan selata ja analysoida reseptejä. Tämän tavoitteen ohella työssä pyrittiin teknisesti ymmärtämään:
+- miten Next.js:n App Router -arkkitehtuuri toimii,
+- kuinka dataa voidaan hakea ja välimuistittaa palvelinympäristössä,
+- milloin staattinen sivugenerointi on tarkoituksenmukaista,
+- kuinka asiakaspuolen interaktiivisuus yhdistetään palvelinrenderöityihin näkymiin.
 
-Projektin päätavoitteina on:
-1. Oppia Next.js 15:n keskeiset konseptit, erityisesti Server-Side Generation (SSG) ja API Routes
-2. Ymmärtää, miten Next.js eroaa perinteisestä React-sovelluksesta
-3. Toteuttaa toimiva full-stack sovellus, joka hyödyntää ulkoista API:a
-4. Soveltaa moderneja web-kehityksen parhaita käytäntöjä
+Nämä valinnat perustuvat Next.js-dokumentaatioon ja sen suosittelemiin suunnittelumalleihin.
 
-### Valitut teknologiat
-
-- **Next.js 15** - React-pohjainen framework SSG- ja SSR-tukella
-- **TypeScript** - Tyypillinen JavaScript paremman kehittäjäkokemuksen saavuttamiseksi
-- **Tailwind CSS** - Utility-first CSS-framework nopeaan tyylittelyyn
-- **TheMealDB API** - Ilmainen resepti-API tietojen hakemiseen
-- **Lucide React** - Modernit SVG-ikonit käyttöliittymään
-
----
-
-## 2. Projektin tavoitteet
-
-### Ratkaistava ongelma
-
-Monet ihmiset etsivät jatkuvasti uusia resepti-ideoita, mutta reseptien etsiminen eri lähteistä voi olla työlästä. Recipe Analyzer tarjoaa helpon tavan:
-- Etsiä reseptejä nimellä
-- Selata reseptejä aakkosjärjestyksessä
-- Suodattaa reseptejä kategorian mukaan (esim. Seafood, Dessert)
-- Suodattaa reseptejä maan/keittiön mukaan (esim. Italian, Mexican)
-- Nähdä yksityiskohtaiset ohjeet ja ainesosaluettelot
-
-### Miksi nämä teknologiat valittiin?
-
-#### Next.js 15
-Next.js valittiin, koska:
-- **SSG (Static Site Generation)**: Mahdollistaa nopean latausajan esirenderoinnin ansiosta
-- **API Routes**: Mahdollistaa backend-toiminnallisuuden ilman erillistä palvelinta
-- **File-based routing**: Yksinkertainen reittien hallinta tiedostojärjestelmän kautta
-- **Image optimization**: Automaattinen kuvien optimointi
-- **TypeScript-tuki**: Valmis tuki TypeScriptille
-
-#### TypeScript
-TypeScript parantaa koodin laatua:
-- Tyyppien tarkistus kehitysaikana
-- Parempi autocompletion
-- Vähemmän runtime-virheitä
-- Itsedokumentoiva koodi
-
-#### Tailwind CSS
-Tailwind valittiin nopeuttamaan kehitystä:
-- Ei tarvitse kirjoittaa erillistä CSS:ää
-- Konsistentti design-system
-- Pieni bundle-koko (purge-toiminnon ansiosta)
-- Responsiivinen design helposti
-
----
-
-## 3. Toteutus
-
-### 3.1 Projektin rakenne
+## 3. Sovelluksen arkkitehtuuri
 
 Next.js-sovelluksen rakenne noudattaa App Router -arkkitehtuuria:
 
@@ -83,7 +35,7 @@ recipe-analyzer/
 │   │       └── route.ts          # Reseptihaku API
 │   ├── meals/
 │   │   └── [id]/
-│   │       └── page.tsx          # Dynaaminen reseptisivu
+│   │       └── page.tsx          # Staattinen reseptisivu
 │   ├── about/
 │   │   └── page.tsx              # Tietoja-sivu
 │   ├── contact/
@@ -103,43 +55,29 @@ recipe-analyzer/
 ├── tailwind.config.ts            # Tailwind-konfiguraatio
 └── tsconfig.json                 # TypeScript-konfiguraatio
 ```
+Projektin hakemistorakenne perustuu Next.js 15:n tiedostopohjaiseen reititykseen. Keskeiset sovellusosat sijaitsevat `app/`-hakemistossa, joka sisältää muun muassa sivut, maketin ja API-reitit. Dynaamiset reseptisivut toteutetaan reitillä `app/meals/[id]/`, jonka staattiset parametrit generoidaan build-vaiheessa. Komponentit on koottu `components/`-hakemistoon ja ulkoisia rajapintoja käsittelevät funktiot `lib/meals.ts` -moduuliin.
 
-### 3.2 Sivut ja reitit
+Tämä rakenne noudattaa Next.js:n App Router -dokumentaation suosituksia ja varmistaa, että tietojen haku ja sivujen generointi on jaettu selkeästi eri tasoille.
 
-#### Pääreitit:
-- `/` - Kotisivu reseptilistalla
-- `/meals/[id]` - Yksittäisen reseptin sivu
-- `/about` - Tietoja sovelluksesta
-- `/contact` - Yhteystiedot
+## 4. Datanhaku ja staattinen sivugenerointi
+Staattinen sivugenerointi (SSG) mahdollistaa reseptisivujen ennakkoluonnin. Sovellus hyödyntää `generateStaticParams()`-funktiota kerätäkseen kaikki saatavilla olevat resepti-ID:t TheMealDB-rajapinnasta. Esimerkiksi kirjainten läpikäynti toimii näin:
 
-#### API-reitit:
-- `/api/search` - Reseptien haku nimellä
-- `/api/analyze` - AI-pohjainen reseptin analyysi
-
-### 3.3 Static Site Generation (SSG)
-
-SSG:tä hyödynnetään reseptisivuilla (`/meals/[id]/page.tsx`):
-
-```typescript
-// Generate static params (set of IDs) for SSG
+```ts
 export async function generateStaticParams() {
-  // Generoidaan kaikille aakkosille
   const letters = 'abcdefghijklmnopqrstuvwxyz'.split('');
-  
   const allMeals = await Promise.all(
     letters.map(letter => fetchMealsByFirstLetter(letter))
   );
-  
   const meals = allMeals.flat();
-  
-  return meals.map((meal) => ({
-    id: meal.idMeal,
-  }));
+
+  return meals.map(meal => ({ id: meal.idMeal }));
 }
 
-// Salli dynaaminen generointi puuttuville ID:ille
-export const dynamicParams = true;
+// Optional: control fallback behavior via dynamicParams = true/false
+export const dynamicParams = false; // generate only the IDs listed above
 ```
+
+Kun dynamicParams on asetettu arvoon false, Next.js generoi vain ne dynaamiset reitit, jotka on määritelty staattisesti etukäteen, eikä salli muiden parametrien fallback-renderöintiä. Tämä vastaa Next.js:n SSG-dokumentaation ohjeistusta, jossa kehotetaan määrittämään staattiset parametrit, kun halutaan tuottaa rajattu joukko dynaamisia sivuja ilman fallbackia.
 
 **Miksi SSG?**
 1. **Nopeus**: Sivut renderöidään build-aikana, ei jokaisella pyynnöllä
@@ -147,48 +85,19 @@ export const dynamicParams = true;
 3. **Skaalautuvuus**: Ei palvelinkuormaa jokaista käyttäjää kohden
 4. **Offline-tuki**: Sivut toimivat ilman palvelinta
 
-### 3.4 API Routes
+## 5. API-reitit ja backend-toiminnallisuus
+Sovellus sisältää sisäisiä API-reittejä (API Routes), jotka vastaavat esimerkiksi hakupyynnöistä. Näitä käsitellään kuten perinteisiä backend-päätepisteitä, mutta ne sijaitsevat samassa projektissa:
 
-API Routes mahdollistavat backend-logiikan Next.js-sovelluksessa:
-
-#### Hakutoiminto (`/api/search/route.ts`):
-
-```typescript
-import { NextRequest, NextResponse } from 'next/server';
-
-const API_BASE = 'https://www.themealdb.com/api/json/v1/1';
-
+```ts
 export async function GET(request: NextRequest) {
-  const searchParams = request.nextUrl.searchParams;
-  const query = searchParams.get('q');
-
-  if (!query) {
-    return NextResponse.json(
-      { error: 'Search query is required' },
-      { status: 400 }
-    );
-  }
-
-  try {
-    const res = await fetch(
-      `${API_BASE}/search.php?s=${encodeURIComponent(query)}`
-    );
-    
-    if (!res.ok) {
-      throw new Error('Failed to fetch meals');
-    }
-
-    const data = await res.json();
-    return NextResponse.json(data);
-  } catch (error) {
-    console.error('Search error:', error);
-    return NextResponse.json(
-      { error: 'Failed to search meals' },
-      { status: 500 }
-    );
-  }
+  const query = request.nextUrl.searchParams.get('q');
+  const res = await fetch(`${API_BASE}/search.php?s=${query}`);
+  const data = await res.json();
+  return NextResponse.json(data);
 }
 ```
+
+Tämä arkkitehtuuri on rakennettu Next.js:n API Routes -ohjeiden mukaisesti.
 
 **API Routes vs. perinteinen backend:**
 - Ei tarvita erillistä Express-palvelinta
@@ -196,34 +105,9 @@ export async function GET(request: NextRequest) {
 - Helppo deployment Verceliin
 - Samassa projektissa kuin frontend
 
-### 3.5 Ero tavalliseen React-sovellukseen
-
-| Ominaisuus | Next.js | Perinteinen React |
-|-----------|---------|-------------------|
-| Renderöinti | Server & Client | Vain Client |
-| Reititys | File-based | React Router |
-| Backend | API Routes | Erillinen palvelin |
-| SEO | Erinomainen | Heikko |
-| Initial load | Nopea (SSG/SSR) | Hidas |
-| Code splitting | Automaattinen | Manuaalinen |
-| Image optimization | Sisäänrakennettu | Manuaalinen |
-
-### 3.6 Tietojen jako SSG:n ja API Routesien välillä
-
-Tiedot sijaitsevat keskitetysti `lib/meals.ts`-tiedostossa:
+### 5.1 Tietojen jako SSG:n ja API Routesien välillä
 
 ```typescript
-// lib/meals.ts
-export interface Meal {
-  idMeal: string;
-  strMeal: string;
-  strCategory: string | null;
-  strArea: string | null;
-  strInstructions: string | null;
-  strMealThumb: string | null;
-  [key: string]: any;
-}
-
 const API_BASE = 'https://www.themealdb.com/api/json/v1/1';
 
 // Funktio reseptien hakemiseen kirjaimella
@@ -238,29 +122,14 @@ export async function fetchMealsByFirstLetter(letter: string): Promise<Meal[]> {
   const data: MealsResponse = await res.json();
   return data.meals ?? [];
 }
-
-// Funktio kategorioiden hakemiseen
-export async function fetchCategories(): Promise<string[]> {
-  const res = await fetch(`${API_BASE}/list.php?c=list`, {
-    next: { revalidate: 86400 } // Cache 24 tuntia
-  });
-  if (!res.ok) {
-    throw new Error('Failed to fetch categories');
-  }
-
-  const data: { meals: { strCategory: string }[] | null } = await res.json();
-  return data.meals ? data.meals.map(m => m.strCategory) : [];
-}
-
-// Muut funktiot...
 ```
+Sovelluksessa kaikki ateriatietojen käsittely on keskitetty yhteen paikkaan, `lib/meals.ts` -moduuliin. Tämä tiedosto määrittelee Meal-tyypin sekä joukon funktioita, joilla reseptit ja kategoriat voidaan hakea ulkoisesta `TheMealDB`-rajapinnasta. Esimerkiksi reseptien noutamiseen käytetty funktio muodostaa API-kutsun annetun alkukirjaimen perusteella, jolloin fetch pyytää osoitteesta `search.php?f=a` tai vastaavaa. Funktio palauttaa JSON-muotoisen vastauksen, josta poimitaan vain reseptilista. Samalla tavoin kategorioiden hakua varten on oma funktionsa, joka käsittelee rajapinnan palauttaman `list.php?c=list` -datan ja muuntaa sen pelkäksi kategoriaketjujen listaksi.
 
-**Sama moduuli käytetään:**
-1. **SSG:ssä**: `generateStaticParams()` käyttää näitä funktioita
-2. **Server Componentsissa**: `page.tsx` käyttää näitä funktioita
-3. **API Routesissa**: `/api/search` voisi käyttää samoja funktioita (tällä hetkellä tekee suoran API-kutsun)
+Sama moduuli palvelee sovelluksen useita eri osia. Staattisessa sivugeneroinnissa (`generateStaticParams`) näitä samoja haku­funktioita käytetään luomaan parametreja, joiden perusteella Next.js rakentaa valmiita sivuja build-vaiheessa. Server Components -puolella esimerkiksi page.tsx voi kutsua samoja funktioita, jolloin komponentti saa käyttöönsä tuoreet tiedot aina kun sivu renderöidään palvelimella. API-reiteillä, kuten `/api/search`, voidaan myös hyödyntää täsmälleen samoja haku­funktioita sen sijaan, että reitti tekisi erillisiä suoria API-kutsuja. Näin kaikki logiikka pysyy yhdessä paikassa, mikä vähentää koodin toisteisuutta ja helpottaa ylläpitoa.
 
-### 3.7 Käytännön esimerkki: Staattinen sivu + Live API
+___
+
+### 5.2 Käytännön esimerkki: Staattinen sivu + Live API
 
 **Kotisivu (`app/page.tsx`)**: Renderöidään palvelimella
 
@@ -283,14 +152,6 @@ export default async function HomePage({ searchParams }: HomePageProps) {
   } else {
     meals = await fetchMealsByFirstLetter(letter);
   }
-
-  return (
-    <main>
-      {/* Server-renderöity sisältö */}
-      <SearchAndFilter categories={categories} areas={areas} />
-      <MealList meals={meals} title={title} />
-    </main>
-  );
 }
 ```
 
@@ -311,177 +172,101 @@ export default function SearchAndFilter({ categories, areas }) {
       router.push(`/?search=${encodeURIComponent(searchQuery.trim())}`);
     }
   };
-
-  return (
-    <form onSubmit={handleSearch}>
-      <input
-        type="text"
-        value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
-        placeholder="Search recipes..."
-      />
-      <button type="submit">Search</button>
-    </form>
-  );
-}
 ```
+Tässä esimerkissä kotisivu toimii palvelinpuolella renderöitynä sivuna. `app/page.tsx` hakee kaikki tarvittavat tiedot joko build-vaiheessa tai käyttäjän pyynnön yhteydessä. Sivun alussa luetaan URL:sta välitetyt hakuehdot, kuten valittu kirjain, kategoria, alue tai vapaa hakusana. Tämän jälkeen palvelin suorittaa rinnakkaisesti kategorioiden ja alueiden haun, ja valitun hakutavan mukaan noutaa myös oikean reseptilistan. Jos URL sisältää hakusanan, käytetään hakufunktiota; jos kategoria on valittu, reseptit haetaan kategorian perusteella; muussa tapauksessa ladataan ne reseptit, jotka alkavat tietyllä kirjaimella. Lopuksi palvelin palauttaa rakenteen, jossa server-renderöityyn näkymään sijoitetaan hakukomponentti sekä lista löytyneistä aterioista.
 
-**Tämä osoittaa:**
-1. Sivut generoidaan staattisesti tai server-puolella
-2. Client-komponentit voivat olla interaktiivisia
-3. URL-muutokset triggaavat server-puolen päivityksiä
-4. Ei tarvita erillisiä API-kutsuja frontendistä (käytetään Next.js-reititystä)
+Hakukomponentti on puolestaan client-puolen komponentti, joka tarjoaa interaktiivisen käyttöliittymän. Se sisältää lomakkeen ja tekstikentän, ja kun käyttäjä lähettää lomakkeen, komponentti päivittää selaimen URL-osoitetta esimerkiksi muotoon `/?search=kanakeitto`. Tämä URL-muutos ei suorita erillistä HTTP-kutsua API:in, vaan hyödyntää Next.js:n sisäistä reititystä. Kun osoite vaihtuu, palvelin renderöi kotisivun uudelleen ja hakee uudet tiedot sen perusteella, mitä URL:ssa nyt on.
+
+Kokonaisuutena esimerkki näyttää, miten staattinen ja dynaaminen renderöinti voivat toimia rinnakkain. Sivun varsinainen data ladataan palvelinpuolella, mutta käyttöliittymän interaktiiviset ominaisuudet ovat client-komponenteissa. Kun käyttäjä tekee muutoksia, ne välittyvät automaattisesti palvelimelle URL-parametrien avulla, jolloin erillisiä frontendin API-kutsuja ei tarvita.
 
 ---
 
-## 4. Käytetyt teknologiat
+## 6. Käytetyt teknologiat
 
-### 4.1 Next.js 15
+### 6.1 Next.js 15
 
-**Mitä varten:** Full-stack React framework  
-**Miksi valittiin:** 
-- App Router moderne arkkitehtuuri
-- Server Components oletuksena
-- Automaattinen optimointi
-- Zero-config TypeScript-tuki
+**Tarkoitus:** Full-stack React -framework\
+**Syy valintaan:** Moderni App Router, Server Components, automaattiset
+optimoinnit, TS-tuki.
 
-**Toteutus projektissa:**
-- File-based routing App Routerilla
-- Server Components päänäkymiin
-- Client Components interaktiivisiin osiin
-- API Routes backend-logiikkaan
-- Image-komponentti optimoituihin kuviin
+**Projektissa:** - App Router + file-based routing\
+- Server/Client Components\
+- API Routes\
+- Image-komponentti
 
-```typescript
-// next.config.ts
-const nextConfig: NextConfig = {
+``` ts
+const nextConfig = {
   images: {
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.themealdb.com',
-        pathname: '/images/**',
-      },
+      { protocol: 'https', hostname: 'www.themealdb.com', pathname: '/images/**' }
     ],
   },
-  productionBrowserSourceMaps: false,
 };
 ```
 
-### 4.2 TypeScript
+### 6.2 TypeScript
 
-**Mitä varten:** Tyypillinen ohjelmointi  
-**Miksi valittiin:** Parempi kehittäjäkokemus ja vähemmän virheitä
+**Tarkoitus:** Tyyppiturvallinen ohjelmointi\
+**Syy valintaan:** Vähemmän virheitä, parempi kehittäjäkokemus.
 
-**Toteutus projektissa:**
-
-```typescript
-// Interfacet reseptitiedoille
+``` ts
 export interface Meal {
   idMeal: string;
   strMeal: string;
-  strCategory: string | null;
-  strArea: string | null;
-  strInstructions: string | null;
-  strMealThumb: string | null;
   [key: string]: any;
 }
 
-// Props-tyypit komponenteille
-interface MealPageProps {
-  params: Promise<{ id: string }>;
-}
-
-// Async-funktioiden paluuarvot
 async function fetchMealById(id: string): Promise<Meal | null> {
-  // ...
+  /* ... */
 }
 ```
 
-### 4.3 Tailwind CSS
+### 6.3 Tailwind CSS
 
-**Mitä varten:** Utility-first CSS-framework  
-**Miksi valittiin:** Nopea kehitys ilman erillistä CSS:ää
+**Tarkoitus:** Utility-first CSS\
+**Syy valintaan:** Nopea ja joustava tyylien rakentaminen.
 
-**Toteutus projektissa:**
-
-```jsx
-// Responsiivinen layout Tailwindilla
-<main className="max-w-6xl mx-auto py-8 px-4">
-  <h1 className="text-3xl font-bold mb-4">Recipe Analyzer</h1>
-  
-  {/* Grid-layout resepteille */}
-  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-    {meals.map(meal => (
-      <MealCard key={meal.idMeal} meal={meal} />
-    ))}
+``` jsx
+<main className="max-w-6xl mx-auto p-4">
+  <h1 className="text-3xl font-bold">Recipe Analyzer</h1>
+  <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+    {meals.map(m => <MealCard key={m.idMeal} meal={m} />)}
   </div>
-  
-  {/* Suodatusvalikot */}
-  <select className="w-full px-4 py-2 border border-gray-300 rounded-lg 
-                     focus:outline-none focus:ring-2 focus:ring-blue-500">
-    {/* ... */}
-  </select>
 </main>
 ```
 
-### 4.4 TheMealDB API
+### 6.4 TheMealDB API
 
-**Mitä varten:** Reseptitietojen lähde  
-**Miksi valittiin:** Ilmainen, dokumentoitu, laaja valikoima
+**Tarkoitus:** Reseptidatan lähde\
+**Syy valintaan:** Ilmainen, dokumentoitu ja laaja.
 
-**API-endpoint-esimerkit:**
-```
-GET /search.php?s={name}       # Haku nimellä
-GET /search.php?f={letter}     # Haku kirjaimella
-GET /lookup.php?i={id}         # Yksittäinen resepti
-GET /filter.php?c={category}   # Suodata kategorialla
-GET /filter.php?a={area}       # Suodata maalla
-GET /list.php?c=list           # Kategoriat
-GET /list.php?a=list           # Maat
-```
+**Tärkeimmät endpointit:** - /search.php?s={name} - /lookup.php?i={id} -
+/filter.php?c={category} - /list.php?c=list
 
-**Toteutus projektissa:**
-
-```typescript
-// Caching Next.js:n avulla
-export async function fetchMealById(id: string): Promise<Meal | null> {
+``` ts
+export async function fetchMealById(id: string) {
   const res = await fetch(
     `https://www.themealdb.com/api/json/v1/1/lookup.php?i=${id}`,
-    {
-      next: { revalidate: 3600 } // Revalidoi tunnin välein
-    }
+    { next: { revalidate: 3600 } }
   );
-  
-  if (!res.ok) {
-    throw new Error('Failed to fetch meal');
-  }
-
   const data = await res.json();
-  return data.meals ? data.meals[0] : null;
+  return data.meals?.[0] ?? null;
 }
 ```
 
-### 4.5 Lucide React
+### 6.5 Lucide React
 
-**Mitä varten:** Ikonit käyttöliittymään  
-**Miksi valittiin:** Modernit SVG-ikonit, hyvä React-tuki
+**Tarkoitus:** Modernit SVG-ikonit käyttöliittymään
 
-**Toteutus projektissa:**
-
-```typescript
+``` tsx
 import { Search } from 'lucide-react';
 
-// Hakukentässä
-<Search className="absolute left-3 top-1/2 -translate-y-1/2 
-                   text-gray-400 w-5 h-5" />
-```
-
+<Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
 ---
 
-## 5. Oppimiskokemukset
+## 7. Oppimiskokemukset
 
-### 5.1 Uudet oppimiskohteet
+### 7.1 Uudet oppimiskohteet
 
 #### Next.js App Router
 - Server Components vs. Client Components jako
@@ -504,7 +289,7 @@ import { Search } from 'lucide-react';
 - Caching-strategiat (`revalidate`)
 - Dynamic parameters
 
-### 5.2 Kehitetyt taidot
+### 7.2 Kehitetyt taidot
 
 1. **Full-stack kehitys**: Frontend ja backend samassa projektissa
 2. **Moderne React**: Server Components, async components
@@ -534,9 +319,6 @@ const allMeals = await Promise.all(
   letters.map(letter => fetchMealsByFirstLetter(letter))
 );
 const meals = allMeals.flat();
-
-// Salli myös dynaamiset sivut
-export const dynamicParams = true;
 ```
 
 #### Haaste 2: Source map -virheet
@@ -586,51 +368,7 @@ const meal = await fetchMealById(id);
 ---
 
 ## 6. Jatkokehitys
-
-### 6.1 Suunnitellut parannukset
-
-#### Käyttäjäominaisuudet
-1. **Suosikkien tallennus**: LocalStorage tai tietokanta suosikeille
-2. **Ostoslistan generointi**: Ainesosalista vietävissä PDF:ksi
-3. **Reseptien arvostelu**: Käyttäjien arvostelut ja kommentit
-4. **Käyttäjätilit**: Autentikointi ja henkilökohtaiset profiilit
-
-#### Tekninen kehitys
-1. **Tietokanta**: PostgreSQL tai MongoDB omille resepteille
-2. **Kuvien lataus**: Mahdollisuus ladata omia kuvia
-3. **PWA**: Progressive Web App offline-tukeen
-4. **Testaus**: Jest ja React Testing Library testien kirjoittamiseen
-5. **Analytics**: Käyttötilastojen seuranta
-
-### 6.2 Uudet ominaisuudet
-
-#### Ravintotieto-analyysi
-- Kalorilaskuri
-- Makroravinteiden jakauma
-- Allergeenien tunnistus
-
-#### Sosiaalinen ominaisuus
-- Reseptien jakaminen
-- Kommenttiosio
-- Käyttäjien omat reseptit
-
-#### Hakutoiminnon parantaminen
-- Moninkertainen suodatus (kategoria + maa + ainesosa)
-- Ainesosa-pohjainen haku ("Mitä voin tehdä näillä aineksilla?")
-- Vaihtoehtoisten ainesosien ehdotukset
-
-### 6.3 Teknologiavalinnat jatkossa
-
-| Teknologia | Käyttötarkoitus | Miksi? |
-|-----------|-----------------|--------|
-| Prisma | ORM-työkalu | TypeScript-tuki, helppokäyttöinen |
-| NextAuth.js | Autentikointi | Next.js-integraatio |
-| React Query | State management | Palvelinpuolen tilan hallinta |
-| Zod | Validointi | TypeScript-integraatio |
-| Playwright | E2E-testaus | Luotettava testaustyökalu |
-| Vercel | Hosting | Paras Next.js-tuki |
-
----
+Sovellusta on mahdollista laajentaa lisäämällä käyttäjäkohtaisia ominaisuuksia (esimerkiksi suosikkireseptit), oman tietokannan käyttöä, reseptien analyysitoimintoja tai ladattavia ostoslistoja. Kaikki nämä perustuisivat nykyiseen arkkitehtuuriin, jota voidaan laajentaa ilman suuria rakenteellisia muutoksia.
 
 ## 7. Kaaviot ja kuvat
 
@@ -676,115 +414,32 @@ sequenceDiagram
     N-->>U: Reseptisivu
 ```
 
-### 7.3 Komponenttihierarkia
-
-```mermaid
-graph TD
-    A[layout.tsx] --> B[page.tsx]
-    B --> C[SearchAndFilter]
-    B --> D[MealList]
-    D --> E[MealCard]
-    
-    F[meals/id/page.tsx] --> G[Image]
-    F --> H[AnalyzePanel]
-    
-    style A fill:#ffcdd2
-    style B fill:#f8bbd0
-    style F fill:#e1bee7
-```
-
-### 7.4 SSG vs CSR Flow
-
-```mermaid
-graph LR
-    A[Build Time] -->|generateStaticParams| B[Fetch All Recipes]
-    B --> C[Generate Static HTML]
-    C --> D[Deploy]
-    
-    E[Runtime] -->|User visits| F[Serve Static HTML]
-    F --> G[Hydrate React]
-    G --> H[Interactive]
-    
-    style A fill:#c8e6c9
-    style E fill:#fff9c4
-```
-
----
-
 ## 8. Lähteet
 
-### Dokumentaatio ja oppaat
+1. **App Router Routing Basics**  
+   https://nextjs.org/docs/14/app/building-your-application/routing  
+   *How the `app/` directory, pages, layouts, and nested routes work.*
 
-1. **Next.js Documentation**  
-   URL: https://nextjs.org/docs  
-   Käytetty: Next.js 15 App Router -dokumentaatio, API Routes, Image optimization
+2. **Dynamic Routes + Static Generation (`generateStaticParams`)**  
+   - Dynamic Routes: https://nextjs.org/docs/app/api-reference/file-conventions/dynamic-routes  
+   - `generateStaticParams`: https://nextjs.org/docs/app/api-reference/functions/generate-static-params  
+   *Used for `app/meals/[id]/page.tsx` in your project.*
 
-2. **React Documentation**  
-   URL: https://react.dev  
-   Käytetty: Server Components, Hooks, TypeScript-tuki
+3. **Data Fetching, Caching & Revalidation**  
+   https://nextjs.org/docs/app/building-your-application/data-fetching/fetching-caching-and-revalidating  
+   *Matches your usage of `fetch(..., { next: { revalidate: 3600 } })`.*
 
-3. **TypeScript Handbook**  
-   URL: https://www.typescriptlang.org/docs/  
-   Käytetty: Interface-määrittelyt, Generic-tyypit
+4. **Server vs Client Components**  
+   https://nextjs.org/docs/app/getting-started/server-and-client-components  
+   *Explains your server-rendered pages vs client components like `SearchAndFilter`.*
 
-4. **Tailwind CSS Documentation**  
-   URL: https://tailwindcss.com/docs  
-   Käytetty: Utility classes, Responsive design, Configuration
+5. **Route Handlers (`app/api/.../route.ts`)**  
+   https://nextjs.org/docs/app/building-your-application/routing/route-handlers  
+   *Documentation for your `/api/search` and `/api/analyze` endpoints.*
 
-5. **TheMealDB API Documentation**  
-   URL: https://www.themealdb.com/api.php  
-   Käytetty: API-endpointit, Query-parametrit
-
-### Työkalut ja kirjastot
-
-6. **Lucide React**  
-   URL: https://lucide.dev/guide/packages/lucide-react  
-   Käytetty: SVG-ikonit käyttöliittymään
-
-7. **Vercel Platform**  
-   URL: https://vercel.com/docs  
-   Käytetty: Deployment-ohjeet, Environment variables
-
-### Opetusmateriaalit
-
-8. **Next.js Learn Course**  
-   URL: https://nextjs.org/learn  
-   Käytetty: App Router -konseptit, Data fetching -strategiat
-
-9. **TypeScript Deep Dive**  
-   URL: https://basarat.gitbook.io/typescript/  
-   Käytetty: Advanced TypeScript patterns
-
-### GitHub-repositoriot
-
-10. **Recipe Analyzer Repository**  
-    URL: https://github.com/MusaMamas/recipe-analyzer  
-    Oma projekti: Lähdekoodi ja version history
-
-11. **Next.js Examples**  
-    URL: https://github.com/vercel/next.js/tree/canary/examples  
-    Käytetty: Best practices, Code patterns
-
-### Stack Overflow ja yhteisö
-
-12. **Next.js GitHub Discussions**  
-    URL: https://github.com/vercel/next.js/discussions  
-    Käytetty: Ongelmanratkaisu, Params Promise -issue
-
-13. **Stack Overflow - Next.js-tagit**  
-    URL: https://stackoverflow.com/questions/tagged/next.js  
-    Käytetty: 404-virhe ratkaisut, SSG-strategiat
-
-### Videot ja tutoriaalit
-
-14. **Next.js 15 Tutorial - Traversy Media**  
-    YouTube: Traversy Media kanava  
-    Käytetty: Käytännön esimerkkejä
-
-15. **TypeScript Course for Beginners**  
-    URL: https://www.youtube.com/typescript  
-    Käytetty: TypeScript-perusteiden oppiminen
-
+6. **Next.js 15 Release Overview**  
+   https://nextjs.org/blog/next-15  
+   *Covers new behaviors like `params` becoming a Promise.*
 ---
 
 ## Yhteenveto
@@ -802,7 +457,7 @@ Projekti tarjoaa hyvän pohjan jatkokehitykselle, ja tulevaisuudessa voidaan lis
 
 ---
 
-**Tekijä:** Musa Mamas  
-**Päivämäärä:** Marraskuu 2025  
+**Tekijä:** Musakhan Mamasaliev
+**Päivämäärä:** 20.11.2025  
 **Repositorio:** https://github.com/MusaMamas/recipe-analyzer  
 **Lisenss:** MIT
