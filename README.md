@@ -262,6 +262,7 @@ export async function fetchMealById(id: string) {
 import { Search } from 'lucide-react';
 
 <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+```
 ---
 
 ## 7. Oppimiskokemukset
@@ -457,7 +458,7 @@ Projekti tarjoaa hyvän pohjan jatkokehitykselle, ja tulevaisuudessa voidaan lis
 
 ---
 
-**Tekijä:** Musakhan Mamasaliev
+**Tekijä:** Musakhan Mamasaliev  
 **Päivämäärä:** 20.11.2025  
 **Repositorio:** https://github.com/MusaMamas/recipe-analyzer  
 **Lisenss:** MIT
